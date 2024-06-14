@@ -206,18 +206,3 @@ def restore_case(transpiled: str, case_mappings: list[CaseMapping]) -> str:
         transpiled = transpiled[end:]
 
     return sql
-
-
-if __name__ == "__main__":
-    transpiled_sql = "SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3)); SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3))"
-
-    case_mappings = [
-        CaseMapping(transpiled_token="SELECT", correct_case="select"),
-        CaseMapping(transpiled_token="FROM_UNIXTIME", correct_case="from_unixtime"),
-        CaseMapping(transpiled_token="POW", correct_case="pow"),
-        CaseMapping(transpiled_token="SELECT", correct_case="SELECT"),
-        CaseMapping(transpiled_token="FROM_UNIXTIME", correct_case="FROM_UNIXTIME"),
-        CaseMapping(transpiled_token="POW", correct_case="POW"),
-    ]
-    restored_sql = restore_case(transpiled_sql, case_mappings)
-    print(restored_sql)
