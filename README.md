@@ -4,3 +4,7 @@
 [![license](https://img.shields.io/github/license/tylerhillery/sql-translate.svg)](https://github.com/tylerhillery/sql-translate/blob/main/LICENSE)
 
 Google Translate but for SQL Dialects
+
+## Overview
+
+This is a personal side project I am building as a learning exercise to dog-food Supabase and learn about Web Development.
