@@ -105,8 +105,9 @@ def generate_case_mapping(transpiled: str, original: str) -> list[CaseMapping]:
        This results in a worst-case scenario where every original token is compared to every
        transpiled token and vice versa, resulting in a Big O complexity of O(n^2). Optimization
        can be done in the future.
-    5. Uses itertools.zip_longest to align unmatched tokens, using the last value of the shorter
-       list as the fill value to handle mismatched lengths.
+    5. Uses zip to align the unmatched tokens if the no-match transpiled tokens list is smaller
+       or equal to the no-match original tokens. If the no-match transpiled tokens list is larger
+       then is uses the zip_longest with the no-match original tokens last value as a fill value.
     6. Loops through the zip list, checking if the original token is upper case. If it is,
        appends the CaseMapping of the transpiled token to the upper() version of the
        transpiled token; otherwise, it maps it to the lower() version.
@@ -163,19 +164,20 @@ def generate_case_mapping(transpiled: str, original: str) -> list[CaseMapping]:
             transpiled_token_index += len(no_match_transpiled_tokens)
             original_token_index += len(no_match_original_tokens)
 
-            if len(no_match_transpiled_tokens) < len(no_match_original_tokens):
-                fill_value = no_match_transpiled_tokens[-1]
+            if len(no_match_transpiled_tokens) <= len(no_match_original_tokens):
+                no_match_zipped = list(
+                    zip(no_match_transpiled_tokens, no_match_original_tokens)
+                )
             else:
-                fill_value = no_match_original_tokens[-1]
+                no_match_zipped = list(
+                    itertools.zip_longest(
+                        no_match_transpiled_tokens,
+                        no_match_original_tokens,
+                        fillvalue=no_match_original_tokens[-1],
+                    )
+                )
 
-            for (
-                no_match_transpiled_token,
-                no_match_original_token,
-            ) in itertools.zip_longest(
-                no_match_transpiled_tokens,
-                no_match_original_tokens,
-                fillvalue=fill_value,
-            ):
+            for no_match_transpiled_token, no_match_original_token in no_match_zipped:
                 if no_match_original_token.isupper():
                     case_mappings.append(
                         CaseMapping(
@@ -204,5 +206,7 @@ def restore_case(transpiled: str, case_mappings: list[CaseMapping]) -> str:
         sql += transpiled[:start] + case_mapping.correct_case
 
         transpiled = transpiled[end:]
+
+    sql += transpiled
 
     return sql

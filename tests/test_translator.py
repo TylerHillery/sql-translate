@@ -5,6 +5,7 @@ from sql_translate.translator import (
     SqlTranslationResult,
     generate_case_mapping,
     translate_sql,
+    restore_case,
 )
 
 
@@ -84,5 +85,35 @@ def test_generate_case_mapping() -> None:
     ]
 
     result = generate_case_mapping(transpiled_sql, original_sql)
+
+    assert result == expected_result
+
+
+def test_generate_case_mapping_reverse() -> None:
+    transpiled_sql = (
+        "SELECT EPOCH_MS(1618088028295)\n;\n\tSELECT EPOCH_MS(1618088028295)"
+    )
+    original_sql = "select from_unixtime(1618088028295 / pow(10, 3))\n;\n\tSELECT FROM_UNIXTIME(1618088028295 / POW(10, 3))"
+
+    expected_result = [
+        CaseMapping(transpiled_token="SELECT", correct_case="select"),
+        CaseMapping(transpiled_token="EPOCH_MS", correct_case="epoch_ms"),
+        CaseMapping(transpiled_token="SELECT", correct_case="SELECT"),
+        CaseMapping(transpiled_token="EPOCH_MS", correct_case="EPOCH_MS"),
+    ]
+
+    result = generate_case_mapping(transpiled_sql, original_sql)
+
+    assert result == expected_result
+
+
+def test_restore_case() -> None:
+    transpiled_sql = "SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3)); SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3))"
+    original_sql = "select epoch_ms(1618088028295); SELECT EPOCH_MS(1618088028295)"
+
+    expected_result = "select from_unixtime(1618088028295 / pow(10, 3)); SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3))"
+
+    case_mappings = generate_case_mapping(transpiled_sql, original_sql)
+    result = restore_case(transpiled_sql, case_mappings)
 
     assert result == expected_result
