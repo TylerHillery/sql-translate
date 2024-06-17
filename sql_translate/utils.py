@@ -12,7 +12,7 @@ def get_supported_sqlglot_dialects() -> list[str]:
     sqlglot_dialects_module = importlib.import_module("sqlglot.dialects")
 
     if (module_file := sqlglot_dialects_module.__file__) is None:
-        raise ValueError(
+        raise ImportError(
             "Could not determine the file path of the sqlglot.dialects module."
         )
 
