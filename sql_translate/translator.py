@@ -70,7 +70,8 @@ def translate_sql(sql: str, from_dialect: str, to_dialect: str) -> SqlTranslatio
         except errors.ParseError as e:
             return SqlTranslationResult(False, SqlErrorDetails(**e.errors[0]))
         i += 2
-    return SqlTranslationResult(is_valid_sql, translated_sql)
+
+    return SqlTranslationResult(is_valid_sql, restore_case(translated_sql, sql))
 
 
 @dataclass
@@ -201,10 +202,10 @@ def generate_case_mapping(transpiled: str, original: str) -> list[CaseMapping]:
     return case_mappings
 
 
-def restore_case(transpiled: str, case_mappings: list[CaseMapping]) -> str:
+def restore_case(transpiled: str, original: str) -> str:
     sql = ""
 
-    for case_mapping in case_mappings:
+    for case_mapping in generate_case_mapping(transpiled, original):
         start = transpiled.find(case_mapping.transpiled_token)
         end = start + len(case_mapping.correct_case)
 

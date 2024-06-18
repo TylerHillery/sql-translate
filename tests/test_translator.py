@@ -123,7 +123,6 @@ def test_restore_case() -> None:
 
     expected_result = "select from_unixtime(1618088028295 / pow(10, 3)); SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3))"
 
-    case_mappings = generate_case_mapping(transpiled_sql, original_sql)
-    result = restore_case(transpiled_sql, case_mappings)
+    result = restore_case(transpiled_sql, original_sql)
 
     assert result == expected_result
