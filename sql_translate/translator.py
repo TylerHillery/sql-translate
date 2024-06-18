@@ -1,6 +1,7 @@
 import itertools
 import re
 from dataclasses import dataclass
+from typing import Optional
 
 from sqlglot import errors, transpile
 
@@ -10,9 +11,20 @@ SUPPORTED_DIALECTS = get_supported_sqlglot_dialects()
 
 
 @dataclass
+class SqlErrorDetails:
+    description: Optional[str] = None
+    line: Optional[int] = None
+    col: Optional[int] = None
+    start_context: Optional[str] = None
+    highlight: Optional[str] = None
+    end_context: Optional[str] = None
+    into_expression: Optional[str] = None
+
+
+@dataclass
 class SqlTranslationResult:
     is_valid_sql: bool
-    sql: str
+    sql: str | SqlErrorDetails
 
 
 def translate_sql(sql: str, from_dialect: str, to_dialect: str) -> SqlTranslationResult:
@@ -51,19 +63,12 @@ def translate_sql(sql: str, from_dialect: str, to_dialect: str) -> SqlTranslatio
     is_valid_sql = True
     i = 0
     while i < len(sql_statements) and is_valid_sql:
-        # TODO: setup logging for each sql statement and whitespace
         sql = sql_statements[i]
         whitespace = sql_statements[i + 1] if i + 1 < len(sql_statements) else ""
         try:
             translated_sql += transpile(sql, from_dialect, to_dialect)[0] + whitespace
         except errors.ParseError as e:
-            error_details = e.errors[0]
-            translated_sql = (
-                f"Error: {error_details.get('description')} at "
-                f"[{error_details.get('line')}:{error_details.get('col')}]\n"
-                f"Context: {error_details.get('start_context')}{error_details.get('highlight')}{error_details.get('end_context')}\n"
-            )
-            is_valid_sql = False
+            return SqlTranslationResult(False, SqlErrorDetails(**e.errors[0]))
         i += 2
     return SqlTranslationResult(is_valid_sql, translated_sql)
 

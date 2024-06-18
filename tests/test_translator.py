@@ -2,6 +2,7 @@ import pytest
 
 from sql_translate.translator import (
     CaseMapping,
+    SqlErrorDetails,
     SqlTranslationResult,
     generate_case_mapping,
     translate_sql,
@@ -65,10 +66,19 @@ def test_invalid_sql_with_error() -> None:
     from_dialect = "duckdb"
     to_dialect = "hive"
 
+    expected_result = SqlErrorDetails(
+        description="Expected table name but got None",
+        line=1,
+        col=18,
+        start_context="SELECT * FROM ",
+        highlight="FROM",
+        end_context="",
+        into_expression=None,
+    )
     result = translate_sql(sql, from_dialect, to_dialect)
 
     assert result.is_valid_sql is False
-    assert "Error:" in result.sql
+    assert result.sql == expected_result
 
 
 def test_generate_case_mapping() -> None:
