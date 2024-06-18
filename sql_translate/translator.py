@@ -63,10 +63,12 @@ def translate_sql(sql: str, from_dialect: str, to_dialect: str) -> SqlTranslatio
     is_valid_sql = True
     i = 0
     while i < len(sql_statements) and is_valid_sql:
-        sql = sql_statements[i]
+        sql_statement = sql_statements[i]
         whitespace = sql_statements[i + 1] if i + 1 < len(sql_statements) else ""
         try:
-            translated_sql += transpile(sql, from_dialect, to_dialect)[0] + whitespace
+            translated_sql += (
+                transpile(sql_statement, from_dialect, to_dialect)[0] + whitespace
+            )
         except errors.ParseError as e:
             return SqlTranslationResult(False, SqlErrorDetails(**e.errors[0]))
         i += 2

@@ -29,33 +29,33 @@ def test_invalid_to_dialect() -> None:
 
 
 def test_multiple_sql_statements_with_ending_semicolon() -> None:
-    sql = "SELECT EPOCH_MS(1618088028295); SELECT EPOCH_MS(1618088028295);"
+    sql = "SELECT EPOCH_MS(1618088028295); select EPOCH_MS(1618088028295);"
     from_dialect = "duckdb"
     to_dialect = "hive"
 
-    expected_result = "SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3)); SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3));"
+    expected_result = "SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3)); select FROM_UNIXTIME(1618088028295 / POW(10, 3));"
     result = translate_sql(sql, from_dialect, to_dialect)
 
     assert result == SqlTranslationResult(is_valid_sql=True, sql=expected_result)
 
 
 def test_multiple_sql_statements_without_ending_semicolon() -> None:
-    sql = "SELECT EPOCH_MS(1618088028295); SELECT EPOCH_MS(1618088028295)"
+    sql = "SELECT epoch_ms(1618088028295); SELECT EPOCH_MS(1618088028295)"
     from_dialect = "duckdb"
     to_dialect = "hive"
 
-    expected_result = "SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3)); SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3))"
+    expected_result = "SELECT from_unixtime(1618088028295 / pow(10, 3)); SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3))"
     result = translate_sql(sql, from_dialect, to_dialect)
 
     assert result == SqlTranslationResult(is_valid_sql=True, sql=expected_result)
 
 
 def test_sql_with_various_whitespace() -> None:
-    sql = "SELECT EPOCH_MS(1618088028295)\n;\n\tSELECT EPOCH_MS(1618088028295)"
+    sql = "select EPOCH_MS(1618088028295)\n;\n\tselect EPOCH_MS(1618088028295)"
     from_dialect = "duckdb"
     to_dialect = "hive"
 
-    expected_result = "SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3))\n;\n\tSELECT FROM_UNIXTIME(1618088028295 / POW(10, 3))"
+    expected_result = "select FROM_UNIXTIME(1618088028295 / POW(10, 3))\n;\n\tselect FROM_UNIXTIME(1618088028295 / POW(10, 3))"
     result = translate_sql(sql, from_dialect, to_dialect)
 
     assert result == SqlTranslationResult(is_valid_sql=True, sql=expected_result)
