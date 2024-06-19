@@ -61,6 +61,46 @@ def test_sql_with_various_whitespace() -> None:
     assert result == SqlTranslationResult(is_valid_sql=True, sql=expected_result)
 
 
+def test_format_sql_no_normalize() -> None:
+    sql = "select col_a, col_b, col_c from table where col_a = 1"
+    from_dialect = "postgres"
+    to_dialect = "postgres"
+    options = {
+        "pretty": True,
+        "leading_comma": True,
+        "identify": True,
+        "pad": 4,
+        "indent": 4,
+        "max_text_width": 80,
+    }
+    expected_result = 'select\n    "col_a"\n    , "col_b"\n    , "col_c"\nfrom "table"\nwhere\n    "col_a" = 1'
+    result = translate_sql(sql, from_dialect, to_dialect, options)
+
+    assert result == SqlTranslationResult(is_valid_sql=True, sql=expected_result)
+
+
+def test_format_sql_normalize() -> None:
+    sql = (
+        "SELECT col_A, col_b, col_c, COUNT(*) FROM TABLE WHERE col_a = 1 GROUP BY 1,2,3"
+    )
+    from_dialect = "postgres"
+    to_dialect = "postgres"
+    options = {
+        "pretty": True,
+        "leading_comma": True,
+        "identify": False,
+        "pad": 4,
+        "indent": 4,
+        "max_text_width": 80,
+        "normalize": True,
+        "normalize_functions": "lower",
+    }
+    expected_result = "SELECT\n    col_a\n    , col_b\n    , col_c\n    , count(*)\nFROM table\nWHERE\n    col_a = 1\nGROUP BY\n    1\n    , 2\n    , 3"
+    result = translate_sql(sql, from_dialect, to_dialect, options)
+
+    assert result == SqlTranslationResult(is_valid_sql=True, sql=expected_result)
+
+
 def test_invalid_sql_with_error() -> None:
     sql = "SELECT * FROM FROM;"
     from_dialect = "duckdb"

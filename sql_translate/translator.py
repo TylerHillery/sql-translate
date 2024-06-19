@@ -1,7 +1,7 @@
 import itertools
 import re
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from sqlglot import errors, transpile
 
@@ -27,7 +27,12 @@ class SqlTranslationResult:
     sql: str | SqlErrorDetails
 
 
-def translate_sql(sql: str, from_dialect: str, to_dialect: str) -> SqlTranslationResult:
+def translate_sql(
+    sql: str,
+    from_dialect: str,
+    to_dialect: str,
+    options: Optional[Dict[str, Any]] = None,
+) -> SqlTranslationResult:
     """
     Translates an SQL query from one dialect to another while preserving the original
     whitespace and formatting. If the SQL query is invalid, the function returns an
@@ -37,13 +42,14 @@ def translate_sql(sql: str, from_dialect: str, to_dialect: str) -> SqlTranslatio
     - sql (str): The input SQL query string to be translated.
     - from_dialect (str): The source SQL dialect.
     - to_dialect (str): The target SQL dialect.
+    - options Dict[str, Any]: Additional options to format the string.
 
     Returns:
     - SqlTranslationResult: A dataclass containing:
         - is_valid_sql (bool): True if the SQL query is valid and successfully translated,
                                False if there was a parsing error.
-        - sql (str): The translated SQL query if valid, or an error message detailing the
-                     parsing error if invalid.
+        - sql (str | SQLErrorDetails): The translated SQL query if valid, or an error message
+                                       detailing the parsing error if invalid.
     """
     from_dialect = from_dialect.strip().lower()
     to_dialect = to_dialect.strip().lower()
@@ -58,6 +64,9 @@ def translate_sql(sql: str, from_dialect: str, to_dialect: str) -> SqlTranslatio
             f"Unsupported To Dialect: {to_dialect}. Supported dialects are: {SUPPORTED_DIALECTS}"
         )
 
+    if options is None:
+        options = {}
+
     sql_statements = re.split(r"(\s*;\s*)", sql)
     translated_sql = ""
     is_valid_sql = True
@@ -67,13 +76,17 @@ def translate_sql(sql: str, from_dialect: str, to_dialect: str) -> SqlTranslatio
         whitespace = sql_statements[i + 1] if i + 1 < len(sql_statements) else ""
         try:
             translated_sql += (
-                transpile(sql_statement, from_dialect, to_dialect)[0] + whitespace
+                transpile(sql_statement, from_dialect, to_dialect, **options)[0]
+                + whitespace
             )
         except errors.ParseError as e:
             return SqlTranslationResult(False, SqlErrorDetails(**e.errors[0]))
         i += 2
 
-    return SqlTranslationResult(is_valid_sql, restore_case(translated_sql, sql))
+    if options.get("normalize") is None and options.get("normalize_sql") is None:
+        translated_sql = restore_case(translated_sql, sql)
+
+    return SqlTranslationResult(is_valid_sql, translated_sql)
 
 
 @dataclass
