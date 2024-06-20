@@ -23,3 +23,6 @@ repos:
         args:
          - --strict
          - --ignore-missing-imports
+         - --allow-untyped-decorators
+        additional_dependencies:
+          - pydantic~=2.0

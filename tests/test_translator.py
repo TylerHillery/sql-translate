@@ -1,12 +1,10 @@
 import pytest
 
+from sql_translate.models import CaseMapping, SqlErrorDetails, SqlTranslationResponse
 from sql_translate.translator import (
-    CaseMapping,
-    SqlErrorDetails,
-    SqlTranslationResult,
     generate_case_mapping,
-    translate_sql,
     restore_case,
+    translate_sql,
 )
 
 
@@ -36,7 +34,7 @@ def test_multiple_sql_statements_with_ending_semicolon() -> None:
     expected_result = "SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3)); select FROM_UNIXTIME(1618088028295 / POW(10, 3));"
     result = translate_sql(sql, from_dialect, to_dialect)
 
-    assert result == SqlTranslationResult(is_valid_sql=True, sql=expected_result)
+    assert result == SqlTranslationResponse(is_valid_sql=True, sql=expected_result)
 
 
 def test_multiple_sql_statements_without_ending_semicolon() -> None:
@@ -47,7 +45,7 @@ def test_multiple_sql_statements_without_ending_semicolon() -> None:
     expected_result = "SELECT from_unixtime(1618088028295 / pow(10, 3)); SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3))"
     result = translate_sql(sql, from_dialect, to_dialect)
 
-    assert result == SqlTranslationResult(is_valid_sql=True, sql=expected_result)
+    assert result == SqlTranslationResponse(is_valid_sql=True, sql=expected_result)
 
 
 def test_sql_with_various_whitespace() -> None:
@@ -58,13 +56,13 @@ def test_sql_with_various_whitespace() -> None:
     expected_result = "select FROM_UNIXTIME(1618088028295 / POW(10, 3))\n;\n\tselect FROM_UNIXTIME(1618088028295 / POW(10, 3))"
     result = translate_sql(sql, from_dialect, to_dialect)
 
-    assert result == SqlTranslationResult(is_valid_sql=True, sql=expected_result)
+    assert result == SqlTranslationResponse(is_valid_sql=True, sql=expected_result)
 
 
 def test_format_sql_no_normalize() -> None:
     sql = "select col_a, col_b, col_c from table where col_a = 1"
     from_dialect = "postgres"
-    to_dialect = "postgres"
+    to_dialect = "duckdb"
     options = {
         "pretty": True,
         "leading_comma": True,
@@ -76,7 +74,7 @@ def test_format_sql_no_normalize() -> None:
     expected_result = 'select\n    "col_a"\n    , "col_b"\n    , "col_c"\nfrom "table"\nwhere\n    "col_a" = 1'
     result = translate_sql(sql, from_dialect, to_dialect, options)
 
-    assert result == SqlTranslationResult(is_valid_sql=True, sql=expected_result)
+    assert result == SqlTranslationResponse(is_valid_sql=True, sql=expected_result)
 
 
 def test_format_sql_normalize() -> None:
@@ -98,7 +96,7 @@ def test_format_sql_normalize() -> None:
     expected_result = "SELECT\n    col_a\n    , col_b\n    , col_c\n    , count(*)\nFROM table\nWHERE\n    col_a = 1\nGROUP BY\n    1\n    , 2\n    , 3"
     result = translate_sql(sql, from_dialect, to_dialect, options)
 
-    assert result == SqlTranslationResult(is_valid_sql=True, sql=expected_result)
+    assert result == SqlTranslationResponse(is_valid_sql=True, sql=expected_result)
 
 
 def test_invalid_sql_with_error() -> None:

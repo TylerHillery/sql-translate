@@ -1,30 +1,13 @@
 import itertools
 import re
-from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
 from sqlglot import errors, transpile
 
 from sql_translate.utils import get_supported_sqlglot_dialects
+from sql_translate.models import SqlErrorDetails, SqlTranslationResponse, CaseMapping
 
 SUPPORTED_DIALECTS = get_supported_sqlglot_dialects()
-
-
-@dataclass
-class SqlErrorDetails:
-    description: Optional[str] = None
-    line: Optional[int] = None
-    col: Optional[int] = None
-    start_context: Optional[str] = None
-    highlight: Optional[str] = None
-    end_context: Optional[str] = None
-    into_expression: Optional[str] = None
-
-
-@dataclass
-class SqlTranslationResult:
-    is_valid_sql: bool
-    sql: str | SqlErrorDetails
 
 
 def translate_sql(
@@ -32,7 +15,7 @@ def translate_sql(
     from_dialect: str,
     to_dialect: str,
     options: Optional[Dict[str, Any]] = None,
-) -> SqlTranslationResult:
+) -> SqlTranslationResponse:
     """
     Translates an SQL query from one dialect to another while preserving the original
     whitespace and formatting. If the SQL query is invalid, the function returns an
@@ -80,19 +63,15 @@ def translate_sql(
                 + whitespace
             )
         except errors.ParseError as e:
-            return SqlTranslationResult(False, SqlErrorDetails(**e.errors[0]))
+            return SqlTranslationResponse(
+                is_valid_sql=False, sql=SqlErrorDetails(**e.errors[0])
+            )
         i += 2
 
     if options.get("normalize") is None and options.get("normalize_sql") is None:
         translated_sql = restore_case(translated_sql, sql)
 
-    return SqlTranslationResult(is_valid_sql, translated_sql)
-
-
-@dataclass
-class CaseMapping:
-    transpiled_token: str
-    correct_case: str
+    return SqlTranslationResponse(is_valid_sql=is_valid_sql, sql=translated_sql)
 
 
 def generate_case_mapping(transpiled: str, original: str) -> list[CaseMapping]:
@@ -154,7 +133,11 @@ def generate_case_mapping(transpiled: str, original: str) -> list[CaseMapping]:
         original_token = original_tokens[original_token_index]
 
         if transpiled_token.upper() == original_token.upper():
-            case_mappings.append(CaseMapping(transpiled_token, original_token))
+            case_mappings.append(
+                CaseMapping(
+                    transpiled_token=transpiled_token, correct_case=original_token
+                )
+            )
             transpiled_token_index += 1
             original_token_index += 1
         else:
@@ -202,15 +185,15 @@ def generate_case_mapping(transpiled: str, original: str) -> list[CaseMapping]:
                 if no_match_original_token.isupper():
                     case_mappings.append(
                         CaseMapping(
-                            no_match_transpiled_token,
-                            no_match_transpiled_token.upper(),
+                            transpiled_token=no_match_transpiled_token,
+                            correct_case=no_match_transpiled_token.upper(),
                         )
                     )
                 else:
                     case_mappings.append(
                         CaseMapping(
-                            no_match_transpiled_token,
-                            no_match_transpiled_token.lower(),
+                            transpiled_token=no_match_transpiled_token,
+                            correct_case=no_match_transpiled_token.lower(),
                         )
                     )
 
