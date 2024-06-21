@@ -1,5 +1,4 @@
-import importlib
-from pathlib import Path
+from sqlglot import Dialect
 
 
 def get_supported_sqlglot_dialects() -> list[str]:
@@ -9,17 +8,5 @@ def get_supported_sqlglot_dialects() -> list[str]:
     Returns:
     - List[str]: A list of supported dialect names.
     """
-    sqlglot_dialects_module = importlib.import_module("sqlglot.dialects")
 
-    if (module_file := sqlglot_dialects_module.__file__) is None:
-        raise ImportError(
-            "Could not determine the file path of the sqlglot.dialects module."
-        )
-
-    dialects = [
-        file.with_suffix("").name
-        for file in sorted(Path(module_file).parent.glob("*.py"))
-        if file.name != "__init__.py"
-    ]
-
-    return dialects
+    return sorted([dialect for dialect in Dialect.classes.keys() if dialect])
