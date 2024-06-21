@@ -1,7 +1,10 @@
+from typing import List
+
 from fastapi import FastAPI
 
 from sql_translate.models import SqlTranslationRequest, SqlTranslationResponse
 from sql_translate.translator import translate_sql
+from sql_translate.utils import get_supported_sqlglot_dialects
 
 web_app = FastAPI()
 
@@ -14,3 +17,8 @@ async def translate(request: SqlTranslationRequest) -> SqlTranslationResponse:
         to_dialect=request.to_dialect,
         options=request.options,
     )
+
+
+@web_app.get("/dialects", response_model=List[str])
+async def supported_dialects() -> List[str]:
+    return get_supported_sqlglot_dialects()
