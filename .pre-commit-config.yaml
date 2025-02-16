@@ -1,28 +1,32 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
+      - id: check-toml
       - id: check-yaml
-      - id: debug-statements
+      - id: end-of-file-fixer
       - id: name-tests-test
         args:
           - --pytest-test-first
+      - id: trailing-whitespace
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.8
+    rev: v0.9.6
     hooks:
       - id: ruff
         args:
           - --fix
+      - id: ruff
+        name: sort imports with ruff
+        args: [--select, I, --fix]
       - id: ruff-format
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
+    rev: v1.15.0
     hooks:
       - id: mypy
         args:
-         - --strict
-         - --ignore-missing-imports
-         - --allow-untyped-decorators
+          - --allow-untyped-decorators
+          - --ignore-missing-imports
+          - --strict
         additional_dependencies:
           - pydantic~=2.0
+          - pydantic-settings

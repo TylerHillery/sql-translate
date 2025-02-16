@@ -1,7 +1,0 @@
--r requirements.in
-coverage
-mypy
-pre-commit
-pytest
-ruff
-trio
