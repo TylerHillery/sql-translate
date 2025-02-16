@@ -8,6 +8,6 @@ router = APIRouter(tags=["Hypermedia API"])
 templates = Jinja2Templates(directory="templates")
 
 
-@router.get("/")
+@router.get("/", response_class=HTMLResponse)
 async def home(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(request=request, name="home.html")

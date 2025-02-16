@@ -5,5 +5,8 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     APP_NAME: str = "SQL Translate"
-    APP_VI_STR: str = "/api/vi"
+    API_V1_STR: str = "/api/v1"
     ENVIRONMENT: Literal["dev", "staging", "prod"] = "dev"
+
+
+settings = Settings()
