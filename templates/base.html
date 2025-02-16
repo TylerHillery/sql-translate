@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Translate</title>
+    <link href="{{ url_for('static', path='css/pico.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='js/htmx.min.js') }}"></script>
+</head>
+
+<body>
+    <header>Common Header</header>
+    {% block content %}
+    {% endblock content%}
+    <footer>Common footer</footer>
+</body>
+
+</html>
