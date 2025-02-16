@@ -1,15 +1,11 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+
+from app.routers import data, hypermedia
 
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-templates = Jinja2Templates(directory="templates")
-
-
-@app.get("/")
-async def root(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse(request=request, name="home.html")
+app.include_router(data.router)
+app.include_router(hypermedia.router)
