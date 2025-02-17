@@ -21035,6 +21035,13 @@
       { key: "Alt-A", run: toggleBlockComment },
       { key: "Ctrl-m", mac: "Shift-Alt-m", run: toggleTabFocusMode },
   ].concat(standardKeymap);
+  /**
+  A binding that binds Tab to [`indentMore`](https://codemirror.net/6/docs/ref/#commands.indentMore) and
+  Shift-Tab to [`indentLess`](https://codemirror.net/6/docs/ref/#commands.indentLess).
+  Please see the [Tab example](../../examples/tab/) before using
+  this.
+  */
+  const indentWithTab = { key: "Tab", run: indentMore, shift: indentLess };
 
   function crelt() {
     var elt = arguments[0];
@@ -27212,13 +27219,19 @@
   */
   const oneDark = [oneDarkTheme, /*@__PURE__*/syntaxHighlighting(oneDarkHighlightStyle)];
 
-  // editor.js
+  // TODO:
+  // - Support Light & Dark Mode
 
+  // TODO:
+  // - optional vim mode
   new EditorView({
-    extensions: [basicSetup, sql(), oneDark],
+    extensions: [basicSetup, sql(), oneDark, keymap.of([indentWithTab])],
     parent: document.getElementById("input-editor"),
   });
 
+  // TODO:
+  // - It's read only but cursor still blinks when editor is active
+  // - There should be an easy copy all button
   new EditorView({
     extensions: [basicSetup, sql(), oneDark, EditorState.readOnly.of(true)],
     parent: document.getElementById("output-editor"),
