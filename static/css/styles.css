@@ -1,0 +1,29 @@
+select {
+  width: 30%;
+}
+
+textarea {
+  height: 400px;
+}
+
+header {
+  border-bottom: 1px solid;
+  padding-left: 10px;
+  margin-bottom: 20px;
+}
+
+footer {
+  text-align: center;
+}
+
+/* Set editor dimensions */
+.editor {
+    height: 500px;
+    width: 100%;
+}
+
+/* Stretch editor to fit inside its containing div */
+.cm-editor {
+    height: 100%;
+    width: 100%;
+}

@@ -1,5 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Hello World!</h1>
+
+<div class="container">
+    <section class="grid">
+        <div>
+            <!-- I should be passing in a list of dialects and images -->
+            <select id="from-dialect-select" name="from-dialect" required>
+                <option value="mysql">mysql</option>
+            </select>
+
+            <div class="editor" id="input-editor"></div>
+        </div>
+
+        <div>
+            <!-- I should be passing in a list of dialects and images -->
+            <select id="to-dialect-select" name="from-dialect" required>
+                <option value="postgres">postgres</option>
+            </select>
+            <div class="editor" id="output-editor"></div>
+        </div>
+
+    </section>
+
+</div>
+
+<script src="{{ url_for('static', path='js/editor.bundle.js') }}"></script>
 {% endblock content %}
