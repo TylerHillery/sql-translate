@@ -24586,6 +24586,24 @@ var cm6 = (function (exports) {
           ...lintKeymap
       ])
   ])();
+  /**
+  A minimal set of extensions to create a functional editor. Only
+  includes [the default keymap](https://codemirror.net/6/docs/ref/#commands.defaultKeymap), [undo
+  history](https://codemirror.net/6/docs/ref/#commands.history), [special character
+  highlighting](https://codemirror.net/6/docs/ref/#view.highlightSpecialChars), [custom selection
+  drawing](https://codemirror.net/6/docs/ref/#view.drawSelection), and [default highlight
+  style](https://codemirror.net/6/docs/ref/#language.defaultHighlightStyle).
+  */
+  const minimalSetup = /*@__PURE__*/(() => [
+      highlightSpecialChars(),
+      history(),
+      drawSelection(),
+      syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+      keymap.of([
+          ...defaultKeymap,
+          ...historyKeymap,
+      ])
+  ])();
 
   // Using https://github.com/one-dark/vscode-one-dark-theme/ as reference for the colors
   const chalky = "#e5c07b", coral = "#e06c75", cyan = "#56b6c2", invalid = "#ffffff", ivory = "#abb2bf", stone = "#7d8799", // Brightened compared to original to increase contrast
@@ -27220,14 +27238,24 @@ var cm6 = (function (exports) {
   const StandardSQL = /*@__PURE__*/SQLDialect.define({});
 
   function createEditorState(initialContents, options = {}) {
-    let extensions = [basicSetup, keymap.of([indentWithTab]), sql()];
+    let extensions = [sql()];
 
     if (options.oneDark) extensions.push(oneDark);
 
+    // write only extensions
+    if (!options.readOnly) {
+      extensions.push(basicSetup);
+      extensions.push(keymap.of([indentWithTab]));
+    }
+
     // read only extensions
     if (options.readOnly) {
+      extensions.push(minimalSetup);
+      extensions.push(lineNumbers());
       extensions.push(EditorState.readOnly.of(true));
-      extensions.push(drawSelection({ cursorBlinkRate: 0 }));
+      extensions.push(
+        drawSelection({ cursorBlinkRate: 0, cursorColor: "transparent", cursorWidth: 0 })
+      ); // Hide cursor completely
     }
 
     if (options.htmxTarget && options.htmxEvent) {
@@ -27235,6 +27263,7 @@ var cm6 = (function (exports) {
         if (update.docChanged) {
           const editorContents = update.state.doc.toString();
           htmx.trigger(options.htmxTarget, options.htmxEvent, {
+            // TODO: figure out how to access htmx event object in hx-vals
             sql: editorContents,
           });
         }

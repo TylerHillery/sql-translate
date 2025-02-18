@@ -27,3 +27,8 @@ footer {
     height: 100%;
     width: 100%;
 }
+
+/* hide cursor in output editor */
+#output-editor .cm-cursor {
+  visibility: hidden;
+}
