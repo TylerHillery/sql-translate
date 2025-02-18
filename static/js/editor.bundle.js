@@ -27230,11 +27230,13 @@ var cm6 = (function (exports) {
       extensions.push(drawSelection({ cursorBlinkRate: 0 }));
     }
 
-    // write only extensions
-    if (!options.readOnly) {
+    if (options.htmxTarget && options.htmxEvent) {
       const updateListener = EditorView.updateListener.of((update) => {
         if (update.docChanged) {
-          htmx.trigger("#output-textarea-container", "editor-changed");
+          const editorContents = update.state.doc.toString();
+          htmx.trigger(options.htmxTarget, options.htmxEvent, {
+            sql: editorContents,
+          });
         }
       });
       extensions.push(updateListener);

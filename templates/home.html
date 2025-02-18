@@ -6,7 +6,7 @@
     <section class="grid">
         <div>
             <!-- I should be passing in a list of dialects and images -->
-            <select id="from-dialect-select" name="from-dialect" required>
+            <select id="from-dialect-select" name="from_dialect" required>
                 <option value="mysql">mysql</option>
             </select>
 
@@ -15,7 +15,7 @@
 
         <div>
             <!-- I should be passing in a list of dialects and images -->
-            <select id="to-dialect-select" name="from-dialect" required>
+            <select id="to-dialect-select" name="to_dialect" required>
                 <option value="postgres">postgres</option>
             </select>
             <div class="editor" id="output-editor"></div>
@@ -25,40 +25,11 @@
 
 </div>
 
-<div id="output-textarea-container" style="display: none;" hx-trigger="editor-changed" hx-post="/translate" hx-swap=""
-    hx-vals='{"from_dialect": "mysql", "to_dialect": "postgres", "sql": "select 1"}'>
+<div id="output-textarea-container" style="display: none;" hx-trigger="editor-changed delay:500ms" hx-post="/translate"
+    hx-include="[name='from_dialect'], [name='to_dialect']" hx-vals='js:{sql: inputView.state.doc.toString()}'>
     <textarea id="output-textarea"></textarea>
 </div>
 
 <script src="{{ url_for('static', path='js/editor.bundle.min.js') }}"></script>
-<script>
-    // Initialize input editor
-    const inputView = cm6.createEditorView(undefined, document.getElementById("input-editor"));
-    const inputInitialState = cm6.createEditorState("select * from table", { oneDark: true, readOnly: false });
-    inputView.setState(inputInitialState);
-
-    // Initialize output editor
-    const outputView = cm6.createEditorView(undefined, document.getElementById("output-editor"));
-    const outputInitialState = cm6.createEditorState("", { oneDark: true, readOnly: true });
-    outputView.setState(outputInitialState);
-
-    // Create a function that returns the editor value for hx-vals
-    function getEditorValue() {
-        // Get the editor content (text) from CodeMirror
-        const editorContent = inputView.state.doc.toString();
-
-        // Return an object with the value to include in the POST request
-        return {
-            editor_content: editorContent
-        };
-    }
-
-    // Function to handle the HTMX response
-    document.body.addEventListener('htmx:afterSwap', function (event) {
-        if (event.target.id === "output-textarea-container") {
-            const newOutputContent = document.getElementById('output-textarea').value;
-            outputView.setState(cm6.createEditorState(newOutputContent, { oneDark: true, readOnly: true }));
-        }
-    });
-</script>
+<script src="{{ url_for('static', path='js/editor-setup.js') }}"></script>
 {% endblock content %}

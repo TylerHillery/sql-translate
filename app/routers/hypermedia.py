@@ -28,11 +28,13 @@ async def create_translation(
             sql=data.sql, read=data.from_dialect, write=data.to_dialect
         )
     except sqlglot.errors.ParseError as e:
-        print(e)
-        return
+        return templates.TemplateResponse(
+            request, name="fragments/output-sql.html", context={"sql": str(e)}
+        )
     except sqlglot.errors.UnsupportedError as e:
-        print(e)
-        return
+        return templates.TemplateResponse(
+            request, name="fragments/output-sql.html", context={"sql": str(e)}
+        )
     return templates.TemplateResponse(
         request, name="fragments/output-sql.html", context={"sql": translation[0]}
     )
