@@ -100,11 +100,3 @@ def restore_casing(original: str, transpiled: str) -> str:
             result += case_func(word)
 
     return result
-
-
-if __name__ == "__main__":
-    input = "SELECT FROM_UNIXTIME(1618088028295 / POW(10, 3)); select from_unixtime(1618088028295 / POW(10, 3))"
-    output = "SELECT EPOCH_MS(1618088028295); SELECT EPOCH_MS(1618088028295)"
-    print("Input: ", input)
-    print("Transpiled: ", output)
-    print("Result: ", restore_casing(input, output))
