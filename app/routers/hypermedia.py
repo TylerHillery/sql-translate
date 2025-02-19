@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from app.models import CreateTranslation
-from app.translator import merge_sql_strings, parse_query_delimiters
+from app.translator import merge_sql_strings, parse_query_delimiters, restore_casing
 
 router = APIRouter(tags=["Hypermedia API"])
 
@@ -40,6 +40,8 @@ async def create_translation(
         )
 
     translation = merge_sql_strings(queries, parse_query_delimiters(data.sql))
+
+    translation = restore_casing(data.sql, translation)
 
     return templates.TemplateResponse(
         request, name="fragments/output-sql.html", context={"sql": translation}

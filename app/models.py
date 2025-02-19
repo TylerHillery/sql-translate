@@ -1,7 +1,7 @@
 from pydantic import BaseModel, model_validator
 from typing_extensions import Self
 
-from app.types import SupportedDialects
+from app.custom_types import SupportedDialects
 
 
 class CreateTranslation(BaseModel):
