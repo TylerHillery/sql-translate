@@ -7,14 +7,18 @@
         <div>
             <!-- I should be passing in a list of dialects and images -->
             <!-- trigger on on change -->
-            <select id="from-dialect-select" name="from_dialect" required>
+            <select id="from-dialect-select" name="from_dialect" required
+            hx-trigger="change"
+            hx-include="[name='from_dialect'], [name='to_dialect']" hx-vals='js:{sql: inputView.state.doc.toString()}'
+            hx-target="#output-textarea-container"
+            >
                 {% for dialect in dialects %}
-                    <option value="{{ dialect }}" {% if dialect == 'mysql' %}selected{% endif %}>{{ dialect }}</option>
+                    <option value="{{ dialect }}" {% if dialect == 'MySQL' %}selected{% endif %}>{{ dialect }}</option>
                 {% endfor %}
             </select>
             <button
                 hx-post="/format"
-                hx-include="[name='from_dialect'], [name='to_dialect']" hx-vals='js:{sql: inputView.state.doc.toString()}'
+                hx-include="[name='from_dialect']" hx-vals='js:{sql: inputView.state.doc.toString()}'
                 hx-target="#input-textarea-container"
             >
                 Format
@@ -27,7 +31,7 @@
             <!-- I should be passing in a list of dialects and images -->
             <select id="to-dialect-select" name="to_dialect" required>
                 {% for dialect in dialects %}
-                    <option value="{{ dialect }}" {% if dialect == 'postgres' %}selected{% endif %}>{{ dialect }}</option>
+                    <option value="{{ dialect }}" {% if dialect == 'Postgres' %}selected{% endif %}>{{ dialect }}</option>
                 {% endfor %}
             </select>
             <div class="editor" id="output-editor"></div>

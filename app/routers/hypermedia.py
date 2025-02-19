@@ -1,12 +1,10 @@
 from typing import Annotated
 
 import sqlglot
-import sqlglot.errors
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from app.dialects import SUPPORTED_DIALECTS
 from app.models import CreateTranslation
 from app.translator import merge_sql_strings, parse_query_delimiters, restore_casing
 
@@ -31,7 +29,9 @@ SQLGLOT_FORMAT_SETTINGS = {
 async def home(request: Request) -> HTMLResponse:
     # TODO: add query param translation_id
     return templates.TemplateResponse(
-        request=request, name="home.html", context={"dialects": SUPPORTED_DIALECTS}
+        request=request,
+        name="home.html",
+        context={"dialects": sqlglot.dialects.DIALECTS},
     )
 
 
