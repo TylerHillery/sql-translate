@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from app.models import CreateTranslation
+from app.translator import merge_sql_strings, parse_query_delimiters
 
 router = APIRouter(tags=["Hypermedia API"])
 
@@ -24,17 +25,22 @@ async def create_translation(
     request: Request, data: Annotated[CreateTranslation, Form()]
 ) -> HTMLResponse:
     try:
-        translation = sqlglot.transpile(
+        queries = sqlglot.transpile(
             sql=data.sql, read=data.from_dialect, write=data.to_dialect
         )
     except sqlglot.errors.ParseError as e:
+        # TODO: figure out how to format error message
         return templates.TemplateResponse(
             request, name="fragments/output-sql.html", context={"sql": str(e)}
         )
     except sqlglot.errors.UnsupportedError as e:
+        # TODO: figure out how to format error message
         return templates.TemplateResponse(
             request, name="fragments/output-sql.html", context={"sql": str(e)}
         )
+
+    translation = merge_sql_strings(queries, parse_query_delimiters(data.sql))
+
     return templates.TemplateResponse(
-        request, name="fragments/output-sql.html", context={"sql": translation[0]}
+        request, name="fragments/output-sql.html", context={"sql": translation}
     )

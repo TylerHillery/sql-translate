@@ -36,11 +36,7 @@ function createEditorState(initialContents, options = {}) {
   if (options.htmxTarget && options.htmxEvent) {
     const updateListener = EditorView.updateListener.of((update) => {
       if (update.docChanged) {
-        const editorContents = update.state.doc.toString();
-        htmx.trigger(options.htmxTarget, options.htmxEvent, {
-          // TODO: figure out how to access htmx event object in hx-vals
-          sql: editorContents,
-        });
+        htmx.trigger(options.htmxTarget, options.htmxEvent);
       }
     });
     extensions.push(updateListener);

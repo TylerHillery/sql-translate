@@ -12,7 +12,7 @@ router = APIRouter(prefix=settings.API_V1_STR, tags=["Data API"])
 
 @router.post("/translate")
 async def create_translation(data: Annotated[CreateTranslation, Body()]) -> list[str]:
-    # TODO:
+    # TODO: handle multiple query strings
     # need to handle when user sends multiple strings seperated by ;
     # SQLGlot doesn't preseve any white space before or after the ;
     try:

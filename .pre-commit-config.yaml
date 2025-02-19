@@ -31,3 +31,4 @@ repos:
           - pydantic~=2.0
           - pydantic-settings
           - sqlglot
+        exclude: ^tests/
