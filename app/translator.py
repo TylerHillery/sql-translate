@@ -50,7 +50,7 @@ def restore_casing(original: str, transpiled: str) -> str:
 
     We then figure out "implied" matches based on any words it skips.
 
-    Once the how the range of original words maps to the range of transpiled words
+    Once the range of original words maps to the range of transpiled words
     we apply the casing of the original word based on the first letter.
     """
     original_words = re.split(r"(\s+)", original)
