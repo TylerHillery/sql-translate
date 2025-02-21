@@ -2,12 +2,11 @@
 
 <details class="dropdown">
     <summary id="{{ dialect_type }}-dialect">{{ selected_dialect }}</summary>
-    <ul>
+    <ul style="max-height: 500px; overflow-y: auto;">
         {% for dialect in dialects %}
         {% if dialect != selected_dialect %}
         <li hx-trigger="click" hx-get="/dialect-dropdown" hx-vals='{"dialect": "{{ dialect }}"}'
-            hx-target="#{{ dialect_type}}-dialect-dropdown" value="{{ dialect }}"
-        >
+            hx-target="#{{ dialect_type}}-dialect-dropdown" value="{{ dialect }}">
             <a>{{ dialect }}</a>
         </li>
         {% endif %}
