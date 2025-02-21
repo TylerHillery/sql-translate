@@ -7,11 +7,15 @@
     <title>SQL Translate</title>
     <link href="{{ url_for('static', path='css/pico.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', path='css/styles.css') }}" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', path='images/favicon.ico') }}" type="image/x-icon">
     <script src="{{ url_for('static', path='js/htmx.min.js') }}"></script>
 </head>
 
 <body>
-    <header>SQL Translate</header>
+    <header>
+        <img src="{{ url_for('static', path='images/logo.png') }}" alt="Logo" style="width: 40px; height: auto;">
+        SQL Translate
+    </header>
     {% block content %}
     {% endblock content%}
     <footer>Common footer</footer>

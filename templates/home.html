@@ -1,3 +1,5 @@
+{% from "fragments/dialect-dropdown.html" import dialect_dropdown %}
+
 {% extends "base.html" %}
 
 {% block content %}
@@ -5,35 +7,26 @@
 <div class="container">
     <section class="grid">
         <div>
-            <!-- I should be passing in a list of dialects and images -->
-            <!-- trigger on on change -->
-            <select id="from-dialect-select" name="from_dialect" required
-            hx-trigger="change"
-            hx-include="[name='from_dialect'], [name='to_dialect']" hx-vals='js:{sql: inputView.state.doc.toString()}'
-            hx-target="#output-textarea-container"
-            >
-                {% for dialect in dialects %}
-                    <option value="{{ dialect }}" {% if dialect == 'MySQL' %}selected{% endif %}>{{ dialect }}</option>
-                {% endfor %}
-            </select>
-            <button
-                hx-post="/format"
-                hx-include="[name='from_dialect']" hx-vals='js:{sql: inputView.state.doc.toString()}'
-                hx-target="#input-textarea-container"
-            >
-                Format
-            </button>
+            <div class="grid">
+                <div id="from-dialect-dropdown">
+                    {{ dialect_dropdown(dialects, "MySQL", "from") }}
+                </div>
+                <!-- need to figure out a way to get the from dialect in hv-vals in summary-->
+                <button id="format-btn" hx-post="/format"
+                    hx-vals='js:{sql: inputView.state.doc.toString(), from_dialect: getDialect("from")}'
+                    hx-target="#input-textarea-container">
+                    Format
+                </button>
+            </div>
 
             <div class="editor" id="input-editor"></div>
         </div>
 
         <div>
-            <!-- I should be passing in a list of dialects and images -->
-            <select id="to-dialect-select" name="to_dialect" required>
-                {% for dialect in dialects %}
-                    <option value="{{ dialect }}" {% if dialect == 'Postgres' %}selected{% endif %}>{{ dialect }}</option>
-                {% endfor %}
-            </select>
+            <div id="to-dialect-dropdown"
+                hx-on::after-swap="htmx.trigger('#output-textarea-container', 'dialect-changed')">
+                {{ dialect_dropdown(dialects, "Postgres", "to") }}
+            </div>
             <div class="editor" id="output-editor"></div>
         </div>
 
@@ -41,16 +34,22 @@
 
 </div>
 
-<div id="input-textarea-container" style="display: none;"
->
+<div id="input-textarea-container" style="display: none;">
     <textarea id="input-textarea"></textarea>
 </div>
 
-<div id="output-textarea-container" style="display: none;" hx-trigger="editor-changed delay:500ms" hx-post="/translate"
-    hx-include="[name='from_dialect'], [name='to_dialect']" hx-vals='js:{sql: inputView.state.doc.toString()}'>
+<!-- need to figure out how to send events to drop down changes -->
+<div id="output-textarea-container" style="display: none;"
+    hx-trigger="editor-changed delay:500ms, dialect-changed from:body" hx-post="/translate"
+    hx-vals='js:{sql: inputView.state.doc.toString(), from_dialect: getDialect("from"), to_dialect: getDialect("to")}'>
     <textarea id="output-textarea"></textarea>
 </div>
 
 <script src="{{ url_for('static', path='js/editor.bundle.min.js') }}"></script>
 <script src="{{ url_for('static', path='js/editor-setup.js') }}"></script>
+<script>
+    function getDialect(dialectType) {
+        return document.querySelector(`#${dialectType}-dialect`).textContent
+    }
+</script>
 {% endblock content %}

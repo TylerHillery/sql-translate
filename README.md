@@ -1,6 +1,6 @@
 # SQL Translate
 Google Translate but for SQL Dialects
 
-## Overview
+## Attribution
 
-This is a personal side project I am building as a learning exercise to dog-food Supabase and learn about Web Development.
+- Icon was retrieve from <a href="https://www.flaticon.com/free-icons/database" title="database icons">Database icons created by smashingstocks - Flaticon</a>

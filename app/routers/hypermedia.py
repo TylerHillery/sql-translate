@@ -1,7 +1,9 @@
 from typing import Annotated
 
 import sqlglot
-from fastapi import APIRouter, Form, Request
+import sqlglot.dialects
+import sqlglot.dialects.dialect
+from fastapi import APIRouter, Form, Header, Query, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -32,6 +34,24 @@ async def home(request: Request) -> HTMLResponse:
         request=request,
         name="home.html",
         context={"dialects": sqlglot.dialects.DIALECTS},
+    )
+
+
+@router.get("/dialect-dropdown", response_class=HTMLResponse)
+async def dialects_dopdown(
+    request: Request,
+    dialect: Annotated[str, Query()],
+    hx_target: Annotated[str, Header()],
+) -> HTMLResponse:
+    return templates.TemplateResponse(
+        request=request,
+        name="fragments/dialect-dropdown.html",
+        context={
+            "dialects": sqlglot.dialects.DIALECTS,
+            "selected_dialect": dialect,
+            # TODO: I expect only from-dialect-dropdown and to-dialect-dropdown but should validate that
+            "dialect_type": hx_target.split("-")[0],
+        },
     )
 
 
