@@ -75,8 +75,8 @@ async def create_translation(
         translation = merge_sql_strings(queries, parse_query_delimiters(data.sql))
         sql = restore_casing(data.sql, translation)
     except sqlglot.errors.ParseError as e:
-        sql = str(e).split("\n")[0]
+        sql = "ERROR: " + str(e).split("\n")[0]
     except sqlglot.errors.UnsupportedError as e:
-        sql = str(e).split("\n")[0]
+        sql = "ERROR: " + str(e).split("\n")[0]
 
     return f'<textarea id="{textarea_id}-textarea">{sql}</textarea>'

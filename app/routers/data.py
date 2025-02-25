@@ -6,24 +6,18 @@ from fastapi import APIRouter, Body, HTTPException, status
 
 from app.config import settings
 from app.models import CreateTranslation
+from app.translator import merge_sql_strings, parse_query_delimiters, restore_casing
 
 router = APIRouter(prefix=settings.API_V1_STR, tags=["Data API"])
 
 
 @router.post("/translate")
-async def create_translation(data: Annotated[CreateTranslation, Body()]) -> list[str]:
-    # TODO: handle multiple query strings
-    # need to handle when user sends multiple strings seperated by ;
-    # SQLGlot doesn't preseve any white space before or after the ;
+async def create_translation(data: Annotated[CreateTranslation, Body()]) -> str:
     try:
-        # TODO: I want to parse all queries by ; so transpile only gets
-        # one query. That way when we get errors we can assume [0] is okay
-        translation = sqlglot.transpile(
+        queries = sqlglot.transpile(
             sql=data.sql,
             read=data.from_dialect,
             write=data.to_dialect,
-            # TODO: maybe make this an optional body param
-            unsupported_level=sqlglot.ErrorLevel.RAISE,
         )
     except sqlglot.errors.ParseError as e:
         raise HTTPException(
@@ -35,4 +29,6 @@ async def create_translation(data: Annotated[CreateTranslation, Body()]) -> list
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=dict(error="UnsupportedError", message=str(e)),
         )
-    return translation
+    translation = merge_sql_strings(queries, parse_query_delimiters(data.sql))
+    sql = restore_casing(data.sql, translation)
+    return sql
