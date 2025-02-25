@@ -11,8 +11,7 @@
                 <div id="from-dialect-dropdown">
                     {{ dialect_dropdown(dialects, "MySQL", "from") }}
                 </div>
-                <!-- need to figure out a way to get the from dialect in hv-vals in summary-->
-                <button id="format-btn" hx-post="/format"
+                <button id="format-btn" hx-post="/translate"
                     hx-vals='js:{sql: inputView.state.doc.toString(), from_dialect: getDialect("from")}'
                     hx-target="#input-textarea-container">
                     Format
@@ -38,9 +37,8 @@
     <textarea id="input-textarea"></textarea>
 </div>
 
-<!-- need to figure out how to send events to drop down changes -->
 <div id="output-textarea-container" style="display: none;"
-    hx-trigger="editor-changed delay:500ms, dialect-changed from:body" hx-post="/translate"
+    hx-trigger="editor-changed delay:300ms, dialect-changed from:body" hx-post="/translate"
     hx-vals='js:{sql: inputView.state.doc.toString(), from_dialect: getDialect("from"), to_dialect: getDialect("to")}'>
     <textarea id="output-textarea"></textarea>
 </div>

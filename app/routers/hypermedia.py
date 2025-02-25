@@ -49,7 +49,6 @@ async def dialects_dopdown(
         context={
             "dialects": sqlglot.dialects.DIALECTS,
             "selected_dialect": dialect,
-            # TODO: I expect only from-dialect-dropdown and to-dialect-dropdown but should validate that
             "dialect_type": hx_target.split("-")[0],
         },
     )
@@ -57,8 +56,15 @@ async def dialects_dopdown(
 
 @router.post("/translate", response_class=HTMLResponse)
 async def create_translation(
-    request: Request, data: Annotated[CreateTranslation, Form()]
+    request: Request,
+    data: Annotated[CreateTranslation, Form()],
+    hx_target: Annotated[str, Header()],
 ) -> HTMLResponse:
+    if hx_target == "input-textarea-container":
+        textarea_id = "input"
+    else:
+        textarea_id = "output"
+
     try:
         queries = sqlglot.transpile(
             sql=data.sql,
@@ -66,51 +72,11 @@ async def create_translation(
             write=data.to_dialect,
             **SQLGLOT_FORMAT_SETTINGS,  # type: ignore
         )
+        translation = merge_sql_strings(queries, parse_query_delimiters(data.sql))
+        sql = restore_casing(data.sql, translation)
     except sqlglot.errors.ParseError as e:
-        # TODO: figure out how to format error message
-        return templates.TemplateResponse(
-            request, name="fragments/output-sql.html", context={"sql": str(e)}
-        )
+        sql = str(e).split("\n")[0]
     except sqlglot.errors.UnsupportedError as e:
-        # TODO: figure out how to format error message
-        return templates.TemplateResponse(
-            request, name="fragments/output-sql.html", context={"sql": str(e)}
-        )
+        sql = str(e).split("\n")[0]
 
-    translation = merge_sql_strings(queries, parse_query_delimiters(data.sql))
-    translation = restore_casing(data.sql, translation)
-
-    return templates.TemplateResponse(
-        request, name="fragments/output-sql.html", context={"sql": translation}
-    )
-
-
-@router.post("/format", response_class=HTMLResponse)
-async def format(
-    request: Request, data: Annotated[CreateTranslation, Form()]
-) -> HTMLResponse:
-    try:
-        queries = sqlglot.transpile(
-            sql=data.sql,
-            read=data.from_dialect,
-            write=data.from_dialect,
-            **SQLGLOT_FORMAT_SETTINGS,  # type: ignore
-        )
-    except sqlglot.errors.ParseError as e:
-        # TODO: figure out how to format error message
-        return templates.TemplateResponse(
-            request, name="fragments/output-sql.html", context={"sql": str(e)}
-        )
-    except sqlglot.errors.UnsupportedError as e:
-        # TODO: figure out how to format error message
-        return templates.TemplateResponse(
-            request, name="fragments/output-sql.html", context={"sql": str(e)}
-        )
-
-    # TODO: add push url query_id
-    translation = merge_sql_strings(queries, parse_query_delimiters(data.sql))
-    translation = restore_casing(data.sql, translation)
-
-    return templates.TemplateResponse(
-        request, name="fragments/input-sql.html", context={"sql": translation}
-    )
+    return f'<textarea id="{textarea_id}-textarea">{sql}</textarea>'
