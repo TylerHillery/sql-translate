@@ -14,8 +14,14 @@ const inputOptions = {
   htmxEvent: htmxEvent
 };
 const inputInitialState = cm6.createEditorState(
-  // "select date_format(now(), '%Y-%m-%d') as formatted_date;",
-  "select columna,columnb,columnc,columd from my_table where 1=1",
+  `select
+    id,
+    name,
+    email
+from users
+where
+    created_at > '2021-01-01'`,
+
   inputOptions
 );
 inputView.setState(inputInitialState);

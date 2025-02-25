@@ -10,11 +10,11 @@ def test_create_translation() -> None:
     data = {
         "from_dialect": "mysql",
         "to_dialect": "postgres",
-        "sql": "select date_format(now(), '%Y-%m-%d') as formatted_date;",
+        "sql": "SELECT DATE_FORMAT(NOW(), '%Y-%m-%d') AS FORMATTED_DATE;",
     }
     response = client.post(settings.API_V1_STR + "/translate", json=data)
     assert response.status_code == 200
-    assert response.json() == ["SELECT TO_CHAR(NOW(), 'YYYY-MM-DD') AS formatted_date"]
+    assert response.json() == "SELECT TO_CHAR(NOW(), 'YYYY-MM-DD') AS FORMATTED_DATE;"
 
 
 def test_create_translation_returns_parse_error() -> None:
