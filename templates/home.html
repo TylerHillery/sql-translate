@@ -7,11 +7,11 @@
 <div class="container">
     <section class="grid">
         <div>
-            <div class="grid">
-                <div id="from-dialect-dropdown">
+            <div class="flex-row">
+                <div id="from-dialect-dropdown" class="common-width">
                     {{ dialect_dropdown(dialects, "MySQL", "from") }}
                 </div>
-                <button id="format-btn" hx-post="/translate"
+                <button id="format-btn" class="common-width" hx-post="/translate"
                     hx-vals='js:{sql: inputView.state.doc.toString(), from_dialect: getDialect("from")}'
                     hx-target="#input-textarea-container">
                     Format
@@ -22,7 +22,7 @@
         </div>
 
         <div>
-            <div id="to-dialect-dropdown"
+            <div id="to-dialect-dropdown" class="common-width"
                 hx-on::after-swap="htmx.trigger('#output-textarea-container', 'dialect-changed')">
                 {{ dialect_dropdown(dialects, "Postgres", "to") }}
             </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -13,12 +13,19 @@
 
 <body>
     <header>
-        <img src="{{ url_for('static', path='images/logo.png') }}" alt="Logo" style="width: 40px; height: auto;">
-        SQL Translate
+        <img src="{{ url_for('static', path='images/logo.png') }}" alt="Logo">
+        <h1>SQL Translate</h1>
     </header>
+
     {% block content %}
-    {% endblock content%}
-    <footer>Common footer</footer>
+    {% endblock content %}
+    <footer>
+        <h6>Powered by</h6>
+        <a href="https://github.com/tobymao/sqlglot" target="_blank">
+            <img src="{{ url_for('static', path='images/sqlglot.png') }}" alt="SQLGlot"
+                style="width: 150px; height: 40px;">
+        </a>
+    </footer>
 </body>
 
 </html>
