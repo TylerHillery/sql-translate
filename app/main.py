@@ -19,7 +19,7 @@ pyproject_toml_path = Path(__file__).parent.with_name("pyproject.toml").resolve(
 
 image = (
     modal.Image.debian_slim(python_version="3.13")
-    .pip_install_from_pyproject(str(pyproject_toml_path))
+    .pip_install_from_pyproject(pyproject_toml_path)
     .env({"ENVIRONMENT": "prod"})
     .add_local_dir(static_path, remote_path=static_remote_path)
     .add_local_dir(templates_path, remote_path=templates_remote_path)
