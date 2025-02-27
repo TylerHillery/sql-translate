@@ -8,7 +8,7 @@ from app.config import settings
 from app.routers import data, hypermedia
 
 web_app = FastAPI(title=settings.APP_NAME)
-app = modal.App(name=settings.APP_NAME)
+app = modal.App("sql_translate")
 
 
 static_path = Path(__file__).parent.with_name("static").resolve()
