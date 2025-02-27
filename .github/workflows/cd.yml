@@ -45,4 +45,4 @@ jobs:
 
       - name: Deploy job
         run: |
-          uv run ---no-dev modal deploy -m app.main
+          uv run --no-dev modal deploy -m app.main
