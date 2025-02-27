@@ -1,17 +1,15 @@
-<div style="display: flex; justify-content: center; align-items: center;">
-    <img src="static/images/logo.png" alt="SQL Translate Logo" width="50" style="margin-right: 10px;">
-    <h1>SQL Translate</h1>
+<div style="display: flex; align-items: center;">
+    <img src="static/images/logo.png" alt="SQL Translate Logo" width="50" style="vertical-align: middle;">
+    <h1 style="margin-left: 10px;">SQL Translate</h1>
 </div>
 
 
-<p align="center">
-    <a href="https://github.com/tylerhillery/sql-translate/actions?query=workflow%3ATest">
-        <img src="https://github.com/tylerhillery/sql-translate/workflows/Test/badge.svg" alt="Test"/>
-    </a>
-    <a href="https://github.com/tylerhillery/sql-translate/blob/main/LICENSE">
-        <img src="https://img.shields.io/github/license/tylerhillery/sql-translate.svg" alt="license"/>
-    </a>
-</p>
+
+[![Modal Deplpy](https://github.com/tylerhillery/sql-translate/workflows/CD/badge.svg)](https://github.com/TylerHillery/sql-translate/actions/workflows/cd.yml)
+[![Test](https://github.com/tylerhillery/sql-translate/workflows/Test/badge.svg)](https://github.com/tylerhillery/sql-translate/actions?query=workflow%3ATest)
+[![Coverage](https://coverage-badge.samuelcolvin.workers.dev/tylerhillery/sql-translate.svg)](https://coverage-badge.samuelcolvin.workers.dev/redirect/tylerhillery/sql-translate)
+[![license](https://img.shields.io/github/license/tylerhillery/sql-translate.svg)](https://github.com/tylerhillery/sql-translate/blob/main/LICENSE)
+
 
 ___
 
