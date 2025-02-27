@@ -41,5 +41,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-html
-          path: backend/htmlcov
+          path: coverage_${{ github.sha }}
           include-hidden-files: true
