@@ -36,7 +36,7 @@ jobs:
             export UV_PROJECT_ENVIRONMENT="${pythonLocation}"
             uv sync --group dev
       - name: Runs tests
-        run: uv run pytest --cov-report=xml --cov=app tests/
+        run: uv run pytest --cov=app --cov-report=html:"coverage_${{ github.sha }}" tests/
       - name: Store coverage files
         uses: actions/upload-artifact@v4
         with:
