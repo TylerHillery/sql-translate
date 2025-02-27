@@ -41,8 +41,8 @@ jobs:
       - name: Install dependencies
         run: |
             export UV_PROJECT_ENVIRONMENT="${pythonLocation}"
-            uv sync
+            uv sync --no-dev
 
       - name: Deploy job
         run: |
-          uv run modal deploy -m app.main
+          uv run ---no-dev modal deploy -m app.main
