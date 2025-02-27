@@ -1,6 +1,4 @@
-<h1 style="display: flex; align-items: center;">
-<img src="static/images/logo.png" alt="SQL Translate Logo" width="50" style="margin-right: 10px;">SQL Translate
-</h1>
+# SQL Translate
 
 [![Deploy](https://github.com/tylerhillery/sql-translate/workflows/CD/badge.svg)](https://github.com/TylerHillery/sql-translate/actions/workflows/cd.yml)
 [![Test](https://github.com/tylerhillery/sql-translate/workflows/Test/badge.svg)](https://github.com/tylerhillery/sql-translate/actions?query=workflow%3ATest)
