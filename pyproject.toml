@@ -8,11 +8,11 @@ dependencies = [
     "pydantic-settings>=2.7.1",
     "pydantic>=2.10.6",
     "sqlglot[rs]>=26.6.0",
+    "modal>=0.73.72",
 ]
 
 [dependency-groups]
 dev = [
-    "coverage>=7.6.12",
     "mypy>=1.15.0",
     "pre-commit>=4.1.0",
     "pytest>=8.3.4",

@@ -7,13 +7,15 @@ from fastapi import APIRouter, Form, Header, Query, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
+from app.config import settings
 from app.models import CreateTranslation
 from app.translator import merge_sql_strings, parse_query_delimiters, restore_casing
 
 router = APIRouter(tags=["Hypermedia API"])
 
+templates_dir = "/templates" if settings.ENVIRONMENT == "prod" else "templates"
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=templates_dir)
 
 SQLGLOT_FORMAT_SETTINGS = {
     "pretty": True,
