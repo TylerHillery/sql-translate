@@ -13,14 +13,21 @@
 
 <body>
     <header>
-        <img src="{{ url_for('static', path='images/logo.png') }}" alt="Logo">
-        <h1>SQL Translate</h1>
+        <div class="left-section">
+            <img src="{{ url_for('static', path='images/logo.png') }}" alt="Logo">
+            <h1>SQL Translate</h1>
+        </div>
+        <div class="right-section">
+            <a href="https://github.com/TylerHillery/sql-translate" target="_blank"><img src="{{ url_for('static', path='images/github-mark.png') }}" alt="GitHub"></a>
+        </div>
     </header>
 
     {% block content %}
     {% endblock content %}
     <footer>
-        <h6>Powered by</h6>
+        <h6>
+            Powered by
+        </h6>
         <a href="https://github.com/tobymao/sqlglot" target="_blank">
             <img src="{{ url_for('static', path='images/sqlglot.png') }}" alt="SQLGlot"
                 style="width: 150px; height: 40px;">
