@@ -11,9 +11,6 @@
 [![license](https://img.shields.io/github/license/tylerhillery/sql-translate.svg)](https://github.com/tylerhillery/sql-translate/blob/main/LICENSE)
 
 
-___
-
-
 # Overview
 Google Translate but for SQL Dialects
 
