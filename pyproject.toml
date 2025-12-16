@@ -5,10 +5,10 @@ description = "Like Google Translate but for SQL Dialects"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.115.8",
+    "modal>=1.2.5",
     "pydantic-settings>=2.7.1",
     "pydantic>=2.10.6",
     "sqlglot[rs]>=26.6.0",
-    "modal>=0.73.72",
 ]
 
 [dependency-groups]
